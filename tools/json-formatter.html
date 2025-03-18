@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JSON Formatter & Validator</title>
+    <link rel="stylesheet" type="text/css" href="../index.css" />
+    <style>
+      /* * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      } */
+
+      /* body {
+       
+      } */
+
+      .container {
+        background: linear-gradient(45deg, #1a1a2e, #16213e);
+        color: #fff;
+        display: flex;
+
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .columns {
+        display: flex;
+        gap: 30px;
+        max-width: 90vw;
+        width: 100%;
+      }
+
+      .column {
+        flex: 1;
+      }
+
+      .input-box {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 25px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(163, 41, 41, 0.1);
+      }
+
+      .input-box h2 {
+        color: #00ff9d;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        justify-content: flex-start;
+      }
+
+      button {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: linear-gradient(45deg, #00ff9d, #00ccff);
+        color: #1a1a2e;
+        margin-top: 5vh;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 255, 157, 0.3);
+      }
+
+      .copy-btn {
+        background: linear-gradient(45deg, #00ff9d, #00ccff);
+      }
+
+      .output-box {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 25px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .output-box h2 {
+        color: #00ff9d;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+      }
+
+      .output-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .input-area {
+        width: 100%;
+        height: 60vh;
+        padding: 15px;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        color: #fff;
+        font-size: 14px;
+        resize: none;
+        line-height: 1.5;
+        outline: none;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 5px;
+        box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+      }
+
+      .input-area:focus {
+        box-shadow: none !important;
+        border-bottom: 2px solid #00ff9d;
+        transition: all 0.3s ease;
+      }
+
+      .output-content {
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 15px;
+        background: transparent;
+        border-radius: 8px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .error {
+        color: #ff463a;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .columns {
+          flex-direction: column;
+        }
+
+        .column {
+          width: 100%;
+        }
+      }
+
+      .copy-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+      }
+
+      .output-header {
+        position: relative;
+      }
+
+      .copy-btn {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">Sarath Molathoti</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#blog">Blog</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="container">
+      <div class="columns">
+        <div class="column">
+          <div class="input-box">
+            <h2>Enter JSON</h2>
+            <textarea
+              class="input-area"
+              id="jsonInput"
+              placeholder="Paste your JSON here..."
+            ></textarea>
+            <div class="button-group">
+              <button class="format-btn" onClick="formatJSON()">
+                Format JSON
+              </button>
+              <button class="validate-btn" onClick="validateJSON()">
+                Validate JSON
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="output-box">
+            <h2>Result</h2>
+            <div class="output-header">
+              <div></div>
+              <button class="copy-btn" onClick="copyToClipboard()">Copy</button>
+            </div>
+            <div class="output-content" id="output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function formatJSON() {
+        const input = document.getElementById("jsonInput").value.trim();
+        try {
+          const obj = JSON.parse(input);
+          const formatted = JSON.stringify(obj, null, 4);
+          document.getElementById("output").textContent = formatted;
+          document.querySelector(".copy-btn").style.display = "block";
+        } catch (error) {
+          showError("Invalid JSON format");
+          document.querySelector(".copy-btn").style.display = "none";
+        }
+      }
+
+      function validateJSON() {
+        const input = document.getElementById("jsonInput").value.trim();
+        try {
+          const obj = JSON.parse(input);
+          document.getElementById("output").textContent = "Valid JSON! ✅";
+          document.getElementById("output").className = "";
+        } catch (error) {
+          showError("Invalid JSON format");
+        }
+      }
+
+      function copyToClipboard() {
+        const output = document.getElementById("output");
+        if (output.textContent) {
+          const copyDiv = document.createElement("div");
+          copyDiv.textContent = output.textContent;
+          document.body.appendChild(copyDiv);
+          copyDiv.select();
+          document.execCommand("copy");
+          document.body.removeChild(copyDiv);
+          // Change button text temporarily
+          const copyBtn = document.querySelector(".copy-btn");
+          if (copyBtn) {
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = "Copied!";
+            setTimeout(() => {
+              copyBtn.textContent = originalText;
+            }, 1000);
+          }
+        }
+      }
+
+      function showError(message) {
+        document.getElementById("output").textContent = message;
+        document.getElementById("output").className = "error";
+        hideCopyButton();
+      }
+
+      function showCopyButton() {
+        document.querySelector(".copy-btn").style.display = "block";
+      }
+
+      function hideCopyButton() {
+        document.querySelector(".copy-btn").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
