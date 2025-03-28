@@ -21,9 +21,11 @@
         border-radius: 20px;
         backdrop-filter: blur(10px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        width: 90%;
-        max-width: 450px;
+        width: auto;
+        /* min-width: 450px; */
+        max-width: 100%;
         text-align: center;
+        overflow: visible;
       }
 
       .qr-header {
@@ -81,12 +83,18 @@
         margin: 40px 0 20px 0;
         text-align: center;
       }
-
       .barcode-output {
         padding: 20px;
         border-radius: 15px;
         box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
-        display: inline-block;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: fit-content;
+        max-width: 100%;
+
+        overflow: visible;
+        margin: auto;
       }
 
       #barcode-output {
@@ -111,6 +119,15 @@
     </style>
   </head>
   <body>
+    <nav class="navbar">
+      <div class="logo">Sarath Molathoti</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#blog">Blog</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
     <div class="text-to-qr">
       <div class="qr-container">
         <div class="qr-header">
@@ -162,8 +179,15 @@
           displayValue: false,
         });
 
-        barcodeOutput.style.display = "block";
-        downloadBtn.style.display = "inline-block";
+        setTimeout(() => {
+          barcodeOutput.style.display = "block";
+          // Add more padding to prevent scrollbar
+          barcodeOutput.style.width = canvas.width + "px";
+          document.querySelector(".qr-container").style.maxWidth = "95%";
+          document.querySelector(".qr-container").style.width =
+            canvas.width + 100 + "px";
+          downloadBtn.style.display = "inline-block";
+        }, 100);
       }
 
       document

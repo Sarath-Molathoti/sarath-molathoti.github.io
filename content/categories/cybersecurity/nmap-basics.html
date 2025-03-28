@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nmap in Ethical Hacking | Port Scanning</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      p {
+        margin: 1em 0; /* Restore vertical space between paragraphs */
+      }
+
+      body {
+        background: #0a192f;
+        color: #ffffff;
+        overflow-x: hidden;
+      }
+      main {
+        font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #ffffff;
+        margin: 0;
+        padding: 20px;
+        background-color: #0a192f;
+        font-weight: 400;
+        transition: color 0.3s ease, background-color 0.3s ease;
+      }
+
+      .navbar {
+        position: fixed;
+        width: 100%;
+        padding: 10px 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #001a3a;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 30px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+        position: relative;
+      }
+
+      .nav-links a:hover {
+        color: #00ff9d;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 3px;
+        background: #00ff9d;
+        transition: width 0.3s ease;
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .blog-post {
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: #001a3a;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+        margin-top: 10vh;
+      }
+
+      .blog-post:hover {
+        transform: translateY(-2px);
+      }
+
+      .main-header {
+        color: #00ff9d;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        font-weight: 600;
+        position: relative;
+      }
+
+      .header-h3 {
+        color: #00ff9d !important;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        font-weight: 500;
+        animation: fadeInUp 0.5s ease;
+      }
+      .headers-h1 {
+        font-size: 2em;
+        color: #00ff9d !important;
+        margin-bottom: 0px !important;
+        padding-bottom: 0px !important;
+        font-weight: 500;
+        animation: fadeInUp 0.5s ease;
+        position: relative;
+        margin-bottom: 25px; /* Increased margin to create space after the line */
+      }
+
+      .headers-h1::after {
+        content: "";
+        position: absolute;
+        bottom: -8px; /* Adjust the position relative to the header */
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 255, 157, 0.3) 0%,
+          rgba(0, 255, 157, 0) 100%
+        );
+        opacity: 0.8;
+      }
+
+      .headers-h2 {
+        font-size: 1.4em;
+        color: #00ff9d !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        animation: slideIn 0.5s ease;
+      }
+
+      h3 {
+        color: #00ff9d !important;
+
+        animation: slideIn 0.5s ease;
+      }
+
+      @keyframes breathingBackground {
+        from {
+          background: linear-gradient(
+            180deg,
+            rgba(0, 255, 157, 0.2) 0%,
+            rgba(0, 255, 157, 0) 100%
+          );
+          background-size: 200% 200%;
+        }
+        to {
+          background: linear-gradient(
+            180deg,
+            rgba(0, 255, 157, 0.2) 50%,
+            rgba(0, 255, 157, 0) 100%
+          );
+          background-size: 200% 200%;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .lists {
+        list-style-type: none;
+        padding-left: 25px;
+        margin-bottom: 20px;
+      }
+
+      .lists li {
+        margin-bottom: 8px;
+        color: #e6e6e6;
+        padding-left: 15px;
+        position: relative;
+        transition: transform 0.3s ease;
+      }
+
+      .lists li:hover {
+        transform: translateX(5px);
+      }
+
+      .lists li:before {
+        content: "- ";
+        color: #00ff9d;
+        position: absolute;
+        left: 0;
+        font-weight: bold;
+      }
+
+      .code-style {
+        background-color: #112240;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: monospace, "Fira Code", Consolas, Courier New;
+        font-size: 14px;
+        margin: 15px 0;
+        display: block;
+        white-space: pre-wrap;
+        word-break: break-all;
+        overflow-x: auto;
+        color: #e6e6e6;
+        position: relative;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(0, 255, 157, 0.1);
+      }
+
+      .code-style::before {
+        content: "";
+        color: #00ff9d;
+        font-weight: bold;
+        padding-right: 8px;
+      }
+
+      /* Improved Code Block Styling with Line Numbers */
+      .code-block {
+        background-color: #112240;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: monospace, "Fira Code", Consolas, Courier New;
+        font-size: 14px;
+        margin: 15px 0;
+        display: block;
+        white-space: pre-wrap;
+        word-break: break-all;
+        overflow-x: auto;
+        color: #e6e6e6;
+        position: relative;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(0, 255, 157, 0.1);
+        animation: codeBlockGlow 3s infinite alternate;
+      }
+
+      @keyframes codeBlockGlow {
+        from {
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        to {
+          box-shadow: 0 4px 8px rgba(0, 255, 157, 0.2);
+        }
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+        margin: 25px 0;
+        border-radius: 8px;
+        border: 1px solid #253b52;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+      }
+
+      img:hover {
+        transform: scale(1.02);
+      }
+
+      .tags {
+        margin: 20px 0;
+        padding: 15px 0;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .tag {
+        background: linear-gradient(135deg, #156e0d 0%, #003cff 100%);
+        color: white;
+        border-radius: 25px;
+        padding: 8px 18px;
+        font-size: 0.9em;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 255, 157, 0.2);
+      }
+
+      .tag:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 255, 157, 0.3);
+      }
+
+      /* Smooth Scroll Animation */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Enhanced Card Hover Effects */
+      .blog-post {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .blog-post:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Fading Effect on Scroll */
+      .fade-in-on-scroll {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      .fade-in-on-scroll.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .ordered-list,
+      .unordered-list {
+        padding-left: 1.5em;
+        margin-bottom: 1em;
+      }
+      .copyright {
+        width: 100%;
+        padding: 20px 50px;
+        text-align: center;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+        background: linear-gradient(180deg, #001a3a 0%, #12263b 100%);
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+        animation: glow 2s ease-in-out infinite alternate;
+      }
+
+      .copyright span {
+        position: relative;
+        color: #ffffff;
+        text-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+      }
+
+      @keyframes glow {
+        from {
+          box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+        }
+        to {
+          box-shadow: 0 -5px 20px rgba(0, 255, 157, 0.3);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">Sarath Molathoti</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#blog">Blog</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <main>
+      <article class="blog-post">
+        <h1 class="main-header">Nmap in Ethical Hacking | Port Scanning</h1>
+        <p>Posted on October 21, 2024</p>
+        <div class="tags">
+          <span class="tag">Ethical Hacking</span>
+          <span class="tag">Nmap</span>
+          <span class="tag">Port Scanning</span>
+        </div>
+
+        <h1 class="headers-h1">What is a Port?</h1>
+
+        <p>
+          Ports are numerical identifiers for specific network services or
+          applications. Each device or server uses ports to differentiate
+          between different services (like email, web servers, file transfer,
+          etc.). A device can have up to 65,536 ports, divided into well-known
+          ports (0-1023), registered ports (1024-49151), and dynamic/private
+          ports (49152-65535).
+        </p>
+
+        <h3 class="headers-h2">Well-Known Ports</h3>
+        <p>These are commonly used for popular services:</p>
+        <ul class="lists">
+          <li>Port 80: HTTP (web traffic)</li>
+          <li>Port 443: HTTPS (secure web traffic)</li>
+          <li>Port 22: SSH (secure shell for remote access)</li>
+          <li>Port 21: FTP (file transfer protocol)</li>
+          <li>Port 25: SMTP (email sending)</li>
+        </ul>
+
+        <h3 class="headers-h2">Role in Ethical Hacking</h3>
+        <p>
+          Port Scanning: A fundamental technique in ethical hacking used to
+          identify which ports are open on a target system. By discovering open
+          ports, ethical hackers can identify services running on the system and
+          determine if there are any vulnerabilities to exploit.
+        </p>
+        <p>
+          Tools like Nmap are often used to scan ports to see which services are
+          exposed.
+        </p>
+
+        <h4>Open vs. Closed Ports</h4>
+        <p>
+          <b>Open Ports</b>: Actively accepting connections and can be a gateway
+          for communication. They might be vulnerable if running an outdated or
+          insecure service.
+        </p>
+        <p>
+          <b>Closed Ports</b>: Not accepting connections and usually secure from
+          most basic external threats.
+        </p>
+        <p>
+          <b>Filtering Ports</b>: Firewalls and other security measures can
+          block or filter traffic on certain ports to prevent unauthorized
+          access. Ethical hackers may need to test if firewall rules are
+          properly configured.
+        </p>
+
+        <h1 class="headers-h1">What is Nmap?</h1>
+        <p>
+          Nmap is short for Network Mapper. It is an open-source Linux
+          command-line tool that is used to scan IP addresses and ports in a
+          network and to detect installed applications.
+        </p>
+        <p>
+          Nmap allows network admins to find which devices are running on their
+          network, discover open ports and services, and detect vulnerabilities.
+        </p>
+        <p>
+          Gordon Lyon (pseudonym Fyodor) wrote Nmap as a tool to help map an
+          entire network easily and to find its open ports and services.
+        </p>
+        <p>
+          Nmap has become hugely popular, being featured in movies like The
+          Matrix and the popular series Mr. Robot.
+        </p>
+
+        <p>
+          Ethical hackers use Nmap to identify live hosts on a network, open
+          ports, running services, and even operating systems. It allows for
+          different types of scans that can reveal detailed information about
+          the target network without actively engaging (as in a passive scan) or
+          with active probing (as in aggressive scanning).
+        </p>
+
+        <h3 class="headers-h2">Types of Scans in Nmap</h3>
+        <ul class="lists">
+          <li>
+            <b>SYN Scan</b>: Also known as "half-open" scanning, this is the
+            most popular form of port scanning. It doesn't complete the TCP
+            handshake, making it less detectable by firewalls.
+          </li>
+          <li>
+            <b>TCP Connect Scan</b>: This scan completes the TCP handshake,
+            making it more likely to be logged but it’s also more thorough.
+          </li>
+          <li><b>UDP Scan</b>: Used to check for open UDP ports.</li>
+          <li>
+            <b>Version Detection</b>: Determines the software version of
+            services running on open ports.
+          </li>
+          <li>
+            <b>OS Detection</b>: Identifies the operating system running on a
+            target machine.
+          </li>
+        </ul>
+
+        <h1 class="headers-h1">Basic Nmap Commands</h1>
+
+        <div>
+          <h3 style="margin-top: 35px">1. Basic Scan</h3>
+          <code class="code-style">nmap target_ip</code>
+          <p style="margin-bottom: 15px">
+            By default, Nmap scans the 1,000 most commonly used TCP ports. These
+            are known as the Top 1,000 well-known ports and are selected because
+            they are most likely to be open and in use by services on a network.
+            Nmap maintains a list of the 1,000 most popular ports based on
+            research and usage statistics collected over time. These ports are
+            considered the most likely to be open on a variety of systems, so
+            scanning them by default is often sufficient to identify many open
+            services.
+          </p>
+          <img
+            src="../../assets/nmap-basic-cmd.PNG"
+            alt="nmap-basic-cmd"
+            style="max-width: 100%"
+          />
+
+          <h3>2. Scan Specific Ports</h3>
+          <code class="code-style"
+            >nmap -p 22,80,443 target_ip<br />nmap -p 1-1000 target_ip</code
+          >
+          <p style="margin-bottom: 15px">
+            Scans the specified ports (22, 80, and 443) on the target.The -p
+            option is used to specify which ports Nmap should scan.
+          </p>
+
+          <h3>3. Scan All Ports</h3>
+          <code class="code-style">nmap -p- target_ip</code>
+          <p style="margin-bottom: 15px">
+            Scans all 65,536 TCP ports on the target.
+          </p>
+
+          <h3>4. Service Version Detection</h3>
+          <code class="code-style">nmap -sV target_ip</code>
+          <p style="margin-bottom: 15px">
+            Detects versions of services running on open ports.
+          </p>
+
+          <h3>5. Operating System Detection</h3>
+          <code class="code-style">nmap -O target_ip</code>
+          <p style="margin-bottom: 15px">
+            Attempts to determine the operating system of the target host.
+          </p>
+
+          <h3>6. Aggressive Scan</h3>
+          <code class="code-style">nmap -A target_ip</code>
+          <p style="margin-bottom: 15px">
+            Performs a more comprehensive scan, including OS detection, version
+            detection, script scanning, and traceroute.
+          </p>
+          <h3>7. Ping Scan (No Port Scan)</h3>
+          <code class="code-style">nmap -sn target_ip</code>
+          <p style="margin-bottom: 15px">
+            Checks if the target host is up without scanning for open ports.
+          </p>
+          <img
+            src="../../assets/nmap-sn-cmd.PNG"
+            alt="nmap-sn-cmd"
+            style="max-width: 100%"
+          />
+          <h3>8. TCP SYN Scan (Stealth Scan)</h3>
+          <code class="code-style">nmap -sS target_ip </code>
+          <p style="margin-bottom: 15px">
+            Performs a TCP SYN scan to identify open ports without completing
+            the TCP handshake.
+          </p>
+          <h3 class="header-h3">What is a Stealth Scan (SYN Scan)?</h3>
+
+          <p>
+            A stealth scan (also known as a half-open scan or SYN scan) is a
+            type of port scanning technique used to probe target systems without
+            completing the full TCP connection handshake. Its goal is to avoid
+            detection by intrusion detection systems (IDS) or firewalls, making
+            it more difficult for the target system to detect and log the scan.
+            In a stealth scan (specifically, a SYN scan), the process only
+            partially completes the TCP handshake:
+          </p>
+
+          <ol class="ordered-list">
+            <li>
+              <strong>SYN:</strong> The attacker sends a SYN packet to the
+              target to check if the port is open.
+            </li>
+            <li>
+              <strong>SYN-ACK or RST:</strong>
+              <ul class="unordered-list">
+                <li>
+                  If the port is open, the target responds with a SYN-ACK.
+                </li>
+                <li>
+                  If the port is closed, the target responds with an RST (reset)
+                  packet.
+                </li>
+              </ul>
+            </li>
+            <li>
+              <strong>No ACK:</strong> Instead of completing the handshake by
+              sending an ACK, the attacker sends an RST (reset) packet to
+              terminate the connection before it’s fully established.
+            </li>
+          </ol>
+
+          <p>
+            Because the connection is never fully established, this scan is
+            considered "stealthy," as it leaves fewer traces in system logs
+            compared to a full TCP connection. Many security devices are
+            configured to log completed connections, but not incomplete ones,
+            making this technique less detectable.
+          </p>
+
+          <h3 class="header-h3">Key Characteristics of Stealth Scans</h3>
+
+          <ul class="lists">
+            <li>
+              <strong>Avoids Full TCP Handshake:</strong> By not completing the
+              handshake, the attacker reduces the risk of detection by security
+              systems.
+            </li>
+            <li>
+              <strong>Quick and Efficient:</strong> Stealth scans are fast and
+              can cover a wide range of ports in a relatively short time.
+            </li>
+            <li>
+              <strong>Less Intrusive:</strong> Because it doesn't fully engage
+              the target service, it’s often less disruptive than a full
+              connection scan (such as a TCP connect scan).
+            </li>
+            <li>
+              <strong>Avoiding IDS/IPS Detection:</strong> Many Intrusion
+              Detection Systems (IDS) or Intrusion Prevention Systems (IPS)
+              focus on fully established connections, which makes stealth scans
+              harder to detect.
+            </li>
+          </ul>
+
+          <h4>Disadvantages:</h4>
+          <ul class="lists">
+            <li>
+              <b>Still Detectable</b>: Some modern security devices are
+              configured to detect SYN scans.
+            </li>
+            <li><b>No UDP Scanning</b>: SYN scans work only for TCP ports.</li>
+          </ul>
+          <h3>9. UDP Scan</h3>
+          <code class="code-style">nmap -sU target_ip</code>
+          <p style="margin-bottom: 15px">
+            Scans for open UDP ports on the target.
+          </p>
+          <h3>10. Output to File</h3>
+          <code class="code-style">nmap -oN output.txt target_ip</code>
+          <p style="margin-bottom: 15px">
+            Saves the scan results in normal format to a file named
+            <strong>output.txt</strong>.
+          </p>
+          <h3>11. Output in XML Format</h3>
+          <code class="code-style">nmap -oX output.xml target_ip</code>
+          <p style="margin-bottom: 15px">
+            Saves the scan results in XML format to a file named
+            <strong>output.xml</strong>.
+          </p>
+          <h3>12. Run Specific Nmap Scripts</h3>
+          <code class="code-style">nmap --script script_name target_ip </code>
+          <p style="margin-bottom: 15px">
+            Runs a specific Nmap script against the target.
+          </p>
+          <h3 class="header-h3">What Are Nmap Scripts?</h3>
+          <p>
+            Nmap scripts are written in the Lua programming language and are
+            categorized based on their functionality. These scripts are executed
+            during a scan and allow Nmap to perform tasks that go beyond basic
+            port scanning. They can interact with open ports, services, and
+            protocols to gather additional information or execute specific
+            actions.
+          </p>
+          <h3 class="header-h3">What is Nmap Scripting Engine (NSE)?</h3>
+          <p>
+            The Nmap Scripting Engine (NSE) is one of Nmap’s most powerful and
+            flexible features. It allows users to write and run scripts using
+            the Lua programming language to automate network scanning tasks. NSE
+            scripts can perform a wide range of functions, from basic network
+            discovery to vulnerability detection and exploitation. This
+            capability makes Nmap a versatile tool for security audits, network
+            troubleshooting, and information gathering.
+          </p>
+          <p>
+            Nmap includes a large set of built-in NSE scripts, which are
+            typically stored in the scripts directory of your Nmap installation.
+            Additionally, you can download new scripts from the Nmap community
+            or write your own.
+          </p>
+          <img
+            src="../../assets/nmap-scripts.PNG"
+            alt="nmap-scripts"
+            style="max-width: 100%"
+          />
+          <!-- Add remaining commands similarly styled -->
+
+          <h3>13. Run All Nmap Scripts</h3>
+          <code class="code-style">nmap --script all target_ip</code>
+          <p style="margin-bottom: 15px">
+            Executes all available Nmap scripts on the target.
+          </p>
+          <h3>14. Scan a Range of IP Addresses</h3>
+          <p>
+            To scan a group of IP addresses using Nmap, you have several options
+            depending on how you want to define the group (i.e., ranges,
+            subnets, or individual IPs).
+          </p>
+          <code class="code-style"
+            >nmap 192.168.1.1 192.168.1.2 192.168.1.3<br />
+            nmap 192.168.1.1-254<br />nmap 192.168.1.0/24<br />nmap
+            192.168.1.1-254 --exclude 192.168.1.10 192.168.1.50
+          </code>
+
+          <h3>15. Ignore Host Discovery</h3>
+          <code class="code-style">nmap -p- ipadress -Pn </code>
+          <p style="margin-bottom: 15px">
+            <b>-Pn</b>: This flag skips the host discovery phase.This command
+            will check all TCP ports on the specified IP address, even if the
+            host doesn't respond to ping requests (often due to firewall
+            blocking).
+          </p>
+
+          <h3>16. Faster Full Port Scan</h3>
+          <code class="code-style">nmap -p- ipadress --min-rate 1000 -Pn </code>
+          <p style="margin-bottom: 15px">
+            <b>--min-rate 1000</b> : This flag tells Nmap to send packets at a
+            minimum rate of 1,000 packets per second.This command performs a
+            faster full port scan on the target by increasing the packet rate to
+            at least 1,000 packets per second.
+          </p>
+          <img
+            src="../../assets/nmap-minrate-cmd.PNG"
+            alt="nmap-minrate-cmd"
+            style="max-width: 100%"
+          />
+          <h3>17. Fast Scan (Top 100 Ports)</h3>
+          <code class="code-style">nmap -F target_ip </code>
+          <p style="margin-bottom: 15px">
+            The -F option tells Nmap to perform a fast scan by scanning only the
+            100 most commonly used ports instead of the default 1,000 ports.
+          </p>
+          <h3>18. Very Verbose Scan</h3>
+          <code class="code-style">nmap -vv target_ip </code>
+          <p style="margin-bottom: 15px">
+            -v: Nmap normally runs with limited output. Adding -v increases
+            verbosity (one level). This command will give you detailed
+            information as the scan progresses, including each phase of
+            scanning, such as the port discovery and service detection.
+          </p>
+
+          <!-- Continue adding commands with similar styling -->
+        </div>
+
+        <h1 class="headers-h1">Role of Honeypots in Port Scanning</h1>
+        <p>
+          A honeypot is a computer system that appears to be a legitimate target
+          for attackers, but is actually a trap used to gather information about
+          cybercriminals. By analyzing how attackers interact with the honeypot,
+          security teams can gain valuable insights into attack methods, tools,
+          and strategies used by cybercriminals.
+        </p>
+
+        <h3 class="headers-h2">How Honeypots Work During Port Scanning</h3>
+        <ul class="lists">
+          <li>
+            <b>Attraction</b>: The honeypot is deliberately made to look
+            vulnerable with open ports.
+          </li>
+          <li>
+            <b>Logging and Monitoring</b>: When an attacker scans these ports
+            and attempts to exploit the service, all their actions are logged.
+          </li>
+          <li>
+            <b>No Real Impact</b>: Since it is a decoy system, the real network
+            or systems are not impacted by the attack.
+          </li>
+        </ul>
+      </article>
+    </main>
+
+    <div class="copyright">
+      <span style="font-weight: 300"
+        >© 2025 Sarath Molathoti. All rights reserved.</span
+      >
+    </div>
+    <script src="../../../script.js"></script>
+  </body>
+</html>
