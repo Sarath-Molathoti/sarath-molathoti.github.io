@@ -3,282 +3,117 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sarath Molathoti - Portfolio</title>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="index.css" />
-    <!-- Include Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
+    <title>Loading Portal - Sarath</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #0a192f;
+        color: #00ff9d;
+      }
+
+      #preloader {
+        z-index: 10;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(10, 25, 47, 1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 1s ease;
+      }
+
+      .glitch-text {
+        font-size: 3rem;
+        color: #00ff9d;
+        text-shadow: 0 0 10px #00ff9d, 0 0 20px #00ff9d;
+        animation: glow-flicker 2s infinite ease-in-out;
+      }
+
+      @keyframes glow-flicker {
+        0%,
+        100% {
+          text-shadow: 0 0 10px #00ff9d, 0 0 20px #00ff9d;
+        }
+        50% {
+          text-shadow: 0 0 5px #00ff9d, 0 0 10px #00ff9d;
+        }
+      }
+
+      .progress-bar {
+        margin-top: 30px;
+        width: 250px;
+        height: 6px;
+        background: #003a55;
+        border-radius: 3px;
+        overflow: hidden;
+        box-shadow: 0 0 10px #00ff9d;
+      }
+
+      .progress-bar-inner {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(to right, #00ff9d, #00f2ff);
+        animation: load 3s forwards ease-in-out;
+      }
+
+      @keyframes load {
+        0% {
+          width: 0%;
+        }
+        100% {
+          width: 100%;
+        }
+      }
+    </style>
   </head>
   <body>
-    <nav class="navbar">
-      <div class="logo">Sarath Molathoti</div>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="#blog">Blog</a></li>
-        <li><a href="#work">Work</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-
-    <section id="home" class="hero">
-      <div id="particles-js"></div>
-      <div class="name-section">
-        <h1 class="name-title">Sarath Molathoti</h1>
-        <p class="dynamic-text" id="dynamicText"></p>
-      </div>
-      <div class="buttons">
-        <a href="#contact" class="btn">Get in Touch</a>
-        <a href="#work" class="btn">View Work</a>
-      </div>
-    </section>
-
-    <section id="blog" class="section">
-      <div class="skill-container">
-        <a
-          href="content/categories/frontend/frontend.html"
-          style="text-decoration: none; color: inherit"
-        >
-          <div class="skill-card" data-aos="fade-up">
-            <i class="fas fa-code"></i>
-            <h3>Frontend Development</h3>
-            <p>
-              Proficient in HTML, CSS, JavaScript, and modern frameworks like
-              React and Vue.js.
-            </p>
-          </div>
-        </a>
-        <a href="backend.html" style="text-decoration: none; color: inherit">
-          <div class="skill-card" data-aos="fade-up" data-aos-delay="200">
-            <i class="fas fa-server"></i>
-            <h3>Backend Development</h3>
-            <p>Strong expertise in Node.js, Python (Django/Flask), and Java.</p>
-          </div>
-        </a>
-        <a href="database.html" style="text-decoration: none; color: inherit">
-          <div class="skill-card" data-aos="fade-up" data-aos-delay="400">
-            <i class="fas fa-database"></i>
-            <h3>Database Management</h3>
-            <p>Experience with MySQL, MongoDB, and PostgreSQL.</p>
-          </div>
-        </a>
-        <a
-          href="content/categories/blockchain/blockchain.html"
-          style="text-decoration: none; color: inherit"
-        >
-          <div class="skill-card" data-aos="fade-up" data-aos-delay="600">
-            <i class="fas fa-cube"></i>
-            <h3>Blockchain</h3>
-            <p>
-              Hands-on experience with blockchain technology and smart
-              contracts.
-            </p>
-          </div>
-        </a>
-        <a
-          href="content/categories/cybersecurity/cybersecurity.html"
-          style="text-decoration: none; color: inherit"
-        >
-          <div class="skill-card" data-aos="fade-up" data-aos-delay="800">
-            <i class="fas fa-shield-alt"></i>
-            <h3>Cyber Security</h3>
-            <p>Expertise in cybersecurity principles and ethical hacking.</p>
-          </div>
-        </a>
-        <a
-          href="content/categories/ai/ai.html"
-          style="text-decoration: none; color: inherit"
-        >
-          <div class="skill-card" data-aos="fade-up" data-aos-delay="1000">
-            <i class="fas fa-brain"></i>
-            <h3>Artificial Intelligence</h3>
-            <p>Experience with AI, machine learning, and neural networks.</p>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <section class="work-section">
-      <div class="work-container">
-        <h2 class="section-title">My Work</h2>
-        <div class="work-grid">
-          <!-- Project Card 1 -->
-          <div class="work-card">
-            <div class="card-front">
-              <img
-                src="./content/images/project1.jpg"
-                alt="Project 1"
-                class="project-image"
-              />
-              <div class="hover-overlay">
-                <div class="hover-content">
-                  <h3>E-Commerce Platform</h3>
-                  <div class="tech-stack">
-                    <span>React</span>
-                    <span>Node.js</span>
-                    <span>MongoDB</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="back-content">
-                <h3>E-Commerce Platform</h3>
-                <p>
-                  A scalable e-commerce solution featuring React, Node.js, and
-                  MongoDB integration with payment gateway support.
-                </p>
-                <a href="#" class="btn">View Project</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Project Card 2 -->
-          <div class="work-card">
-            <div class="card-front">
-              <img
-                src="./content/images/project1.jpg"
-                alt="Project 2"
-                class="project-image"
-              />
-              <div class="hover-overlay">
-                <div class="hover-content">
-                  <h3>AI Chatbot</h3>
-                  <div class="tech-stack">
-                    <span>Python</span>
-                    <span>Natural Language Processing</span>
-                    <span>Django</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="back-content">
-                <h3>AI Chatbot</h3>
-                <p>
-                  An AI-powered chatbot using NLP and machine learning to
-                  provide real-time customer support.
-                </p>
-                <a href="#" class="btn">View Project</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Project Card 3 -->
-          <div class="work-card">
-            <div class="card-front">
-              <img
-                src="./content/images/project1.jpg"
-                alt="Project 3"
-                class="project-image"
-              />
-              <div class="hover-overlay">
-                <div class="hover-content">
-                  <h3>Blockchain DApp</h3>
-                  <div class="tech-stack">
-                    <span>Ethereum</span>
-                    <span>Smart Contracts</span>
-                    <span>React</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="back-content">
-                <h3>Blockchain DApp</h3>
-                <p>
-                  A decentralized application built on Ethereum blockchain for
-                  secure and transparent transactions.
-                </p>
-                <a href="#" class="btn">View Project</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Add this section after the blog section -->
-    <section id="tools" class="section">
-      <div class="tools-container">
-        <h2 class="section-title">Tools & Utilities</h2>
-        <div class="tools-grid">
-          <div class="tool-card" data-aos="fade-up">
-            <div class="tool-icon">
-              <i class="fas fa-code"></i>
-            </div>
-            <h3>JSON Formatter</h3>
-            <p>Format and validate your JSON data instantly</p>
-            <a href="tools/json-formatter.html" class="btn">Try Now</a>
-          </div>
-          <div class="tool-card" data-aos="fade-up" data-aos-delay="100">
-            <div class="tool-icon">
-              <i class="fas fa-qrcode"></i>
-            </div>
-            <h3>Text to QR Code</h3>
-            <p>Convert your text into a scannable QR code</p>
-            <a href="tools/text-to-qr.html" class="btn">Generate</a>
-          </div>
-          <div class="tool-card" data-aos="fade-up" data-aos-delay="200">
-            <div class="tool-icon">
-              <i class="fas fa-barcode"></i>
-            </div>
-            <h3>Text to Barcode</h3>
-            <p>Create barcode from your text input</p>
-            <a href="tools/text-to-barcode.html" class="btn">Create</a>
-          </div>
-          <div class="tool-card" data-aos="fade-up" data-aos-delay="300">
-            <div class="tool-icon">
-              <i class="fas fa-image"></i>
-            </div>
-            <h3>Image Compressor</h3>
-            <p>Optimize and compress your images for web</p>
-            <a href="tools/text-compare-tool.html" class="btn">Compress</a>
-          </div>
-        </div>
-      </div>
-    </section>
-    <div class="social-section">
-      <h2 class="section-title">Connect with Me</h2>
-      <div class="social-links-container">
-        <a
-          href="https://in.linkedin.com/in/molathoti-sarath-2276ba145"
-          class="social-link"
-        >
-          <i class="fab fa-linkedin"></i>
-          <span class="social-text">LinkedIn</span>
-        </a>
-        <a href="https://github.com/Sarath-Molathoti" class="social-link">
-          <i class="fab fa-github"></i>
-          <span class="social-text">GitHub</span>
-        </a>
-        <a href="https://twitter.com/molathotisarath" class="social-link">
-          <i class="fab fa-twitter"></i>
-          <span class="social-text">Twitter/X</span>
-        </a>
-        <a
-          href="https://www.instagram.com/thisis_sarath_m/"
-          class="social-link"
-        >
-          <i class="fab fa-instagram"></i>
-          <span class="social-text">Instagram</span>
-        </a>
-        <a href="mailto:sarathmolathoti@gmail.com" class="social-link">
-          <i class="fas fa-envelope"></i>
-          <span class="social-text">Email</span>
-        </a>
+    <div id="preloader">
+      <div class="glitch-text" id="glitchText">S</div>
+      <div class="progress-bar">
+        <div class="progress-bar-inner"></div>
       </div>
     </div>
-    <!-- Add a copyright notice -->
-    <div class="copyright">
-      <span style="font-weight: 300"
-        >© 2025 Sarath Molathoti. All rights reserved.</span
-      >
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="index.js"></script>
+    <script>
+      // Typing animation
+      const fullText = "SARATH MOLATHOTI";
+      const glitchText = document.getElementById("glitchText");
+      let current = 1;
+
+      function type() {
+        if (current <= fullText.length) {
+          glitchText.textContent = fullText.slice(0, current);
+          current++;
+          setTimeout(type, 120);
+        }
+      }
+
+      setTimeout(type, 400);
+
+      // Fade out loader and redirect
+      setTimeout(() => {
+        document.getElementById("preloader").style.opacity = 0;
+        setTimeout(() => {
+          document.getElementById("preloader").style.display = "none";
+          window.location.href = "home.html";
+        }, 1000);
+      }, 3000); // Adjust duration as needed
+    </script>
   </body>
 </html>
