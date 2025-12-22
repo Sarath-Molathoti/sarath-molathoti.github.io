@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-Tuning GPT-2 Model</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="../../../index.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="../../categories/blog-post.css"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">Sarath Molathoti</div>
+      <ul class="nav-links">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <main class="blog-container">
+      <article class="blog-card">
+        <div class="card-header">
+          <h1 class="blog-card-title">
+            Fine-Tuning GPT-2 Model for Text Generation
+          </h1>
+        </div>
+
+        <p>
+          In this post, we will walk through the process of fine-tuning the
+          GPT-2 Medium model on a custom dataset. This tutorial explains each
+          step of the code and how it contributes to training the model
+          effectively.
+        </p>
+
+        <h2>1. Installing Required Libraries</h2>
+        <p>
+          First, we install the necessary libraries for working with the GPT-2
+          model and datasets.
+        </p>
+        <pre><code>!pip install transformers datasets torch evaluate</code></pre>
+
+        <h2>2. Hugging Face CLI Login</h2>
+        <p>Login to Hugging Face to access datasets and models.</p>
+        <pre><code>!huggingface-cli login</code></pre>
+
+        <h2>3. Loading Model and Tokenizer</h2>
+        <p>
+          Here, we load the GPT-2 Medium model and its corresponding tokenizer.
+        </p>
+        <pre><code>from transformers import AutoTokenizer, AutoModelForCausalLM, Trainer, TrainingArguments
+from datasets import load_dataset
+import torch
+from google.colab import files
+
+model_name = "gpt2-medium"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer.pad_token = tokenizer.eos_token</code></pre>
+
+        <h2>4. Uploading and Preparing the Dataset</h2>
+        <p>Upload your JSON file and prepare it for training.</p>
+        <pre><code>uploaded = files.upload()
+file_name = list(uploaded.keys())[0]
+
+def process_text(examples):
+    return {
+        'text': examples["text"]
+    }
+
+dataset = load_dataset("json", data_files=file_name, split="train").map(process_text)</code></pre>
+
+        <h2>5. Tokenizing the Dataset</h2>
+        <p>Tokenize the dataset to prepare it for training.</p>
+        <pre><code>def tokenize_function(examples):
+    tokenized = tokenizer(
+        examples["text"],
+        max_length=512,
+        padding="max_length",
+        truncation=True,
+        return_tensors="np",
+    )
+    tokenized["labels"] = tokenized["input_ids"]
+    return tokenized
+
+tokenized_dataset = dataset.map(tokenize_function, batched=True)</code></pre>
+
+        <h2>6. Setting Up Training Arguments</h2>
+        <p>Configure the training parameters for the GPT-2 model.</p>
+        <pre><code>training_args = TrainingArguments(
+    output_dir="./results",
+    learning_rate=2e-5,
+    per_device_train_batch_size=4,
+    per_device_eval_batch_size=4,
+    num_train_epochs=15,
+    weight_decay=0.01,
+    evaluation_strategy="no",
+    save_strategy="epoch",
+    gradient_checkpointing=False,
+    fp16=False,
+    dataloader_pin_memory=False,
+    report_to="none",
+)</code></pre>
+
+        <h2>7. Initializing and Training the Model</h2>
+        <p>
+          Load the GPT-2 model and start training with the prepared dataset.
+        </p>
+        <pre><code>model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    torch_dtype=torch.float32,
+    device_map="auto",
+)
+
+model.config.pad_token_id = tokenizer.pad_token_id
+model.config.additive_attention_mask = True
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=tokenized_dataset,
+    tokenizer=tokenizer,
+)
+
+trainer.train()</code></pre>
+
+        <h2>8. Testing the Model</h2>
+        <p>Generate text using the trained model with a sample input.</p>
+        <pre><code>def test_model(sample_question):
+    inputs = tokenizer(sample_question, return_tensors="pt", padding=True, truncation=True).to("cuda")
+    outputs = model.generate(**inputs, max_length=200)
+    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    print("IMS Bot:", response)
+
+test_model("What is the event date of BEL Foundation Day?")</code></pre>
+
+        <h2>9. Saving the Model</h2>
+        <p>Save the trained model and tokenizer for future use.</p>
+        <pre><code>model.save_pretrained("./trained_model")
+tokenizer.save_pretrained("./trained_model")</code></pre>
+
+        <h3>Sample Output:</h3>
+        <p>
+          IMS Bot: What is the event date of BEL Foundation Day?<br />
+          System: The date of BEL Foundation Day is 21st April 2025.
+        </p>
+
+        <h2>Conclusion</h2>
+        <p>
+          Following these steps, we can fine-tune the GPT-2 Medium model for
+          custom text generation tasks. This includes installing libraries,
+          preparing the dataset, training the model, and testing it with custom
+          prompts. The trained model can be used for various applications like
+          chatbots, content generation, and more.
+        </p>
+      </article>
+    </main>
+  </body>
+</html>

@@ -3,260 +3,117 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <title>Categories</title>
+    <title>Loading Portal - Sarath</title>
     <style>
-      /* Grid layout for the cards */
-      #main-content {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        grid-gap: 20px;
-        perspective: 1000px; 
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
       }
 
-      .card {
-        width: 80%;
-        height: 200px;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        margin: 20px 0;
-        position: relative;
-        border-radius: 15px;
+      html,
+      body {
+        width: 100%;
+        height: 100%;
         overflow: hidden;
-        transform: scale(1) rotate(0); /* Initial scale and no rotation */
-        transition: transform 0.6s ease-in-out, box-shadow 0.6s ease-in-out; /* Smooth transitions */
-        will-change: transform, box-shadow; /* Optimization */
+        background: #0a192f;
+        color: #00ff9d;
       }
 
-      .card::before {
-        content: "";
+      #preloader {
+        z-index: 10;
         position: absolute;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background-size: cover;
-        background-position: center;
-        transition: transform 0.6s ease-in-out, filter 0.6s ease-in-out; /* Smooth zoom and filter */
-      }
-
-      .card:hover {
-        transform: scale(1.3) rotate(5deg); /* Bigger scale and slight rotation */
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7); /* Stronger shadow for more depth */
-      }
-
-      .card:hover::before {
-        transform: scale(1.4); /* Zoom in the background image even more */
-        filter: brightness(50%); /* Darken the background */
-      }
-
-      .card-content {
-        position: absolute;
-        bottom: 0;
-        background: rgba(
-          0,
-          0,
-          0,
-          0.5
-        ); /* Dark overlay for better text visibility */
-        color: white;
         width: 100%;
-        padding: 10px;
-        text-align: center;
+        height: 100%;
+        background: rgba(10, 25, 47, 1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 1s ease;
       }
 
-      .card-content h2 {
-        margin: 0;
-        font-size: 24px;
-        font-weight: bold;
-        letter-spacing: 1.2px;
+      .glitch-text {
+        font-size: 3rem;
+        color: #00ff9d;
+        text-shadow: 0 0 10px #00ff9d, 0 0 20px #00ff9d;
+        animation: glow-flicker 2s infinite ease-in-out;
       }
 
-      /* Fade-in animation for initial appearance */
-      .fade-in {
-        opacity: 0;
-        animation: fadeIn 0.8s forwards;
+      @keyframes glow-flicker {
+        0%,
+        100% {
+          text-shadow: 0 0 10px #00ff9d, 0 0 20px #00ff9d;
+        }
+        50% {
+          text-shadow: 0 0 5px #00ff9d, 0 0 10px #00ff9d;
+        }
       }
 
-      @keyframes fadeIn {
+      .progress-bar {
+        margin-top: 30px;
+        width: 250px;
+        height: 6px;
+        background: #003a55;
+        border-radius: 3px;
+        overflow: hidden;
+        box-shadow: 0 0 10px #00ff9d;
+      }
+
+      .progress-bar-inner {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(to right, #00ff9d, #00f2ff);
+        animation: load 3s forwards ease-in-out;
+      }
+
+      @keyframes load {
         0% {
-          opacity: 0;
-          transform: translateY(20px); /* Cards slide up as they fade in */
+          width: 0%;
         }
         100% {
-          opacity: 1;
-          transform: translateY(0); /* Cards settle in their final position */
-        }
-      }
-
-      /* Responsive media query */
-      @media (max-width: 768px) {
-        .card-content h2 {
-          font-size: 20px;
+          width: 100%;
         }
       }
     </style>
   </head>
-
   <body>
-    <div class="container">
-      <header>
-        <div class="container">
-          <div class="logo">
-            <h1>sarathmolathoti.me</h1>
-          </div>
-          <nav>
-            <ul>
-              <li><a href="index.html">Home</a></li>
-              <li><a href="index.html">Categories</a></li>
-              <li><a href="about.html">About</a></li>
-              <li><a href="contact.html">Contact</a></li>
-            </ul>
-          </nav>
-          <div class="search-bar">
-            <form id="search-form">
-              <input type="text" id="search-input" placeholder="Search..." />
-              <button type="submit"><i class="fas fa-search"></i></button>
-            </form>
-          </div>
-        </div>
-      </header>
-      <div id="main-content" style="margin: 5vh 10vw">
-        <!-- Web Development Card -->
-        <a
-          href="content/categories/web-development/index.html"
-          style="text-decoration: none"
-        >
-          <div
-            class="card fade-in"
-            style="background-image: url('content/assets/web-development.jpg')"
-          >
-            <div class="card-content">
-              <h2>Web Dev</h2>
-            </div>
-          </div>
-        </a>
-
-        <!-- DevOps Card -->
-        <a
-          href="content/categories/devops/index.html"
-          style="text-decoration: none"
-        >
-          <div
-            class="card fade-in"
-            style="background-image: url('content/assets/devops.jpg')"
-          >
-            <div class="card-content">
-              <h2>DevOps</h2>
-            </div>
-          </div>
-        </a>
-
-        <!-- Cloud Computing Card -->
-        <a
-          href="content/categories/cloud-computing/index.html"
-          style="text-decoration: none"
-        >
-          <div
-            class="card fade-in"
-            style="background-image: url('content/assets/cloud_computing.jpg')"
-          >
-            <div class="card-content">
-              <h2>Cloud Computing</h2>
-            </div>
-          </div>
-        </a>
-
-        <!-- Blockchain Card -->
-        <a
-          href="content/categories/blockchain/index.html"
-          style="text-decoration: none"
-        >
-          <div
-            class="card fade-in"
-            style="background-image: url('content/assets/blockchain.jpg')"
-          >
-            <div class="card-content">
-              <h2>Blockchain</h2>
-            </div>
-          </div>
-        </a>
-
-        <!-- Cyber Security Card -->
-        <a
-          href="content/categories/cyber-security/index.html"
-          style="text-decoration: none"
-        >
-          <div
-            class="card fade-in"
-            style="background-image: url('content/assets/cybersecurity.jpg')"
-          >
-            <div class="card-content">
-              <h2>Cyber Security</h2>
-            </div>
-          </div>
-        </a>
-
-        <!-- AI & ML Card -->
-        <a
-          href="content/categories/python/index.html"
-          style="text-decoration: none"
-        >
-          <div
-            class="card fade-in"
-            style="background-image: url('content/assets/python.jpg')"
-          >
-            <div class="card-content">
-              <h2>Python</h2>
-            </div>
-          </div>
-        </a>
-
-        <!-- System Design -->
-        <a
-          href="content/categories/system-design/index.html"
-          style="text-decoration: none"
-        >
-          <div
-            class="card fade-in"
-            style="background-image: url('content/assets/system-design.jpg')"
-          >
-            <div class="card-content">
-              <h2>System Design</h2>
-            </div>
-          </div>
-        </a>
+    <div id="preloader">
+      <div class="glitch-text" id="glitchText">S</div>
+      <div class="progress-bar">
+        <div class="progress-bar-inner"></div>
       </div>
     </div>
-    <footer style="margin-bottom: 0%">
-      <div class="container">
-        <p>&copy; 2024 Sarath Molathoti. All rights reserved.</p>
-        <div class="social-links">
-          <a href="https://x.com/MolathotiSarath?s=09"
-            ><i class="fab fa-twitter"></i> Twitter</a
-          >
-          |
-          <a
-            href="https://www.linkedin.com/in/molathoti-sarath-2276ba145?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
-            ><i class="fab fa-linkedin-in"></i> LinkedIn</a
-          >
-          |
-          <a
-            href="https://www.instagram.com/thisis_sarath_m?igsh=MTR3eGlpdHl0aGFpNQ=="
-            ><i class="fab fa-instagram"></i> Instagram</a
-          >
-        </div>
-      </div>
-    </footer>
-    <script src="script.js"></script>
+
+    <script>
+      // Typing animation
+      const fullText = "SARATH MOLATHOTI";
+      const glitchText = document.getElementById("glitchText");
+      let current = 1;
+
+      function type() {
+        if (current <= fullText.length) {
+          glitchText.textContent = fullText.slice(0, current);
+          current++;
+          setTimeout(type, 120);
+        }
+      }
+
+      setTimeout(type, 400);
+
+      // Fade out loader and redirect
+      setTimeout(() => {
+        document.getElementById("preloader").style.opacity = 0;
+        setTimeout(() => {
+          document.getElementById("preloader").style.display = "none";
+          window.location.href = "home.html";
+        }, 1000);
+      }, 3000); // Adjust duration as needed
+    </script>
   </body>
 </html>
