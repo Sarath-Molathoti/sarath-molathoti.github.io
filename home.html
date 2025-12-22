@@ -15,7 +15,13 @@
   <body>
     <nav class="navbar">
       <div class="logo">Sarath Molathoti</div>
-      <ul class="nav-links">
+      <!-- Hamburger Menu Button -->
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Home</a></li>
         <li><a href="#blog">Blog</a></li>
         <li><a href="#work">Work</a></li>
@@ -100,7 +106,7 @@
       </div>
     </section>
 
-    <section class="work-section">
+    <section class="work-section" id="work">
       <div class="work-container">
         <h2 class="section-title">My Work</h2>
         <div class="work-grid">
@@ -148,7 +154,7 @@
                   <h3>AI Chatbot</h3>
                   <div class="tech-stack">
                     <span>Python</span>
-                    <span>Natural Language Processing</span>
+                    <span>NLP</span>
                     <span>Django</span>
                   </div>
                 </div>
@@ -199,75 +205,87 @@
         </div>
       </div>
     </section>
-    <!-- Add this section after the blog section -->
-    <section id="tools" class="section">
-      <div class="tools-container">
-        <h2 class="section-title">Tools & Utilities</h2>
-        <div class="tools-grid">
-          <div class="tool-card" data-aos="fade-up">
-            <div class="tool-icon">
-              <i class="fas fa-code"></i>
-            </div>
-            <h3>JSON Formatter</h3>
-            <p>Format and validate your JSON data instantly</p>
-            <a href="tools/json-formatter.html" class="btn">Try Now</a>
-          </div>
-          <div class="tool-card" data-aos="fade-up" data-aos-delay="100">
-            <div class="tool-icon">
-              <i class="fas fa-qrcode"></i>
-            </div>
-            <h3>Text to QR Code</h3>
-            <p>Convert your text into a scannable QR code</p>
-            <a href="tools/text-to-qr.html" class="btn">Generate</a>
-          </div>
-          <div class="tool-card" data-aos="fade-up" data-aos-delay="200">
-            <div class="tool-icon">
-              <i class="fas fa-barcode"></i>
-            </div>
-            <h3>Text to Barcode</h3>
-            <p>Create barcode from your text input</p>
-            <a href="tools/text-to-barcode.html" class="btn">Create</a>
-          </div>
-          <div class="tool-card" data-aos="fade-up" data-aos-delay="300">
-            <div class="tool-icon">
-              <i class="fas fa-image"></i>
-            </div>
-            <h3>Image Compressor</h3>
-            <p>Optimize and compress your images for web</p>
-            <a href="tools/text-compare-tool.html" class="btn">Compress</a>
-          </div>
-          <div class="tool-card" data-aos="fade-up" data-aos-delay="400">
-            <div class="tool-icon">
-              <i class="fas fa-drafting-rectangle"></i>
-            </div>
-            <h3>Draw Perfect Circle</h3>
-            <p>Practice drawing a perfect circle for precision</p>
-            <a href="tools/draw-perfect-circle.html" class="btn">Draw Now</a>
-          </div>
+
+   <!-- Tools Section -->
+<section id="tools" class="section">
+  <div class="tools-container">
+    <h2 class="section-title">Tools & Utilities</h2>
+    <div class="tools-grid">
+      <div class="tool-card" data-aos="fade-up">
+        <div class="tool-icon">
+          <i class="fas fa-code"></i>
         </div>
+        <h3>JSON Formatter</h3>
+        <p>Format and validate your JSON data instantly</p>
+        <a href="tools/format-json.html" class="btn">Try Now</a>
       </div>
-    </section>
-    <div class="social-section">
+      <div class="tool-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="tool-icon">
+          <i class="fas fa-qrcode"></i>
+        </div>
+        <h3>Text to QR Code</h3>
+        <p>Convert your text into a scannable QR code</p>
+        <a href="tools/text-to-qrcode.html" class="btn">Generate</a>
+      </div>
+      <div class="tool-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="tool-icon">
+          <i class="fas fa-barcode"></i>
+        </div>
+        <h3>Text to Barcode</h3>
+        <p>Create barcode from your text input</p>
+        <a href="tools/text-to-barcode.html" class="btn">Create</a>
+      </div>
+      <div class="tool-card" data-aos="fade-up" data-aos-delay="300">
+        <div class="tool-icon">
+          <i class="fas fa-exchange-alt"></i>
+        </div>
+        <h3>Text Compare Tool</h3>
+        <p>Compare two texts and highlight differences</p>
+        <a href="tools/text-compare-tool.html" class="btn">Compare</a>
+      </div>
+      <div class="tool-card" data-aos="fade-up" data-aos-delay="400">
+        <div class="tool-icon">
+          <i class="fas fa-circle"></i>
+        </div>
+        <h3>Draw Perfect Circle</h3>
+        <p>Practice drawing a perfect circle for precision</p>
+        <a href="tools/draw-perfect-circle.html" class="btn">Draw Now</a>
+      </div>
+      <div class="tool-card" data-aos="fade-up" data-aos-delay="500">
+        <div class="tool-icon">
+          <i class="fas fa-lock"></i>
+        </div>
+        <h3>Base64 Encoder/Decoder</h3>
+        <p>Encode and decode text to Base64 format</p>
+        <a href="tools/base64-converter.html" class="btn">Convert</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <div class="social-section" id="contact">
       <h2 class="section-title">Connect with Me</h2>
       <div class="social-links-container">
         <a
           href="https://in.linkedin.com/in/molathoti-sarath-2276ba145"
           class="social-link"
+          target="_blank"
         >
           <i class="fab fa-linkedin"></i>
           <span class="social-text">LinkedIn</span>
         </a>
-        <a href="https://github.com/Sarath-Molathoti" class="social-link">
+        <a href="https://github.com/Sarath-Molathoti" class="social-link" target="_blank">
           <i class="fab fa-github"></i>
           <span class="social-text">GitHub</span>
         </a>
-        <a href="https://twitter.com/molathotisarath" class="social-link">
+        <a href="https://twitter.com/molathotisarath" class="social-link" target="_blank">
           <i class="fab fa-twitter"></i>
           <span class="social-text">Twitter/X</span>
         </a>
         <a
           href="https://www.instagram.com/thisis_sarath_m/"
           class="social-link"
+          target="_blank"
         >
           <i class="fab fa-instagram"></i>
           <span class="social-text">Instagram</span>
@@ -278,11 +296,10 @@
         </a>
       </div>
     </div>
-    <!-- Add a copyright notice -->
+
+    <!-- Copyright -->
     <div class="copyright">
-      <span style="font-weight: 300"
-        >© 2025 Sarath Molathoti. All rights reserved.</span
-      >
+      <span style="font-weight: 300">© 2025 Sarath Molathoti. All rights reserved.</span>
     </div>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>

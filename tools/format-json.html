@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Formatter | Chee Chee Tools</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, #0a0a1a 0%, #1a1a3a 50%, #0d1b2a 100%);
+            color: #fff;
+        }
+
+        /* Stars Canvas */
+        #stars-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Aurora Effect */
+        .aurora {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .aurora-band {
+            position: absolute;
+            width: 200%;
+            height: 40%;
+            left: -50%;
+            filter: blur(80px);
+            animation: auroraWave 15s ease-in-out infinite;
+        }
+
+        .aurora-band:nth-child(1) {
+            top: -10%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(64, 224, 208, 0.3) 20%, 
+                rgba(64, 224, 208, 0.2) 40%, 
+                rgba(64, 224, 208, 0.3) 60%, 
+                transparent 100%);
+        }
+
+        .aurora-band:nth-child(2) {
+            top: 5%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(64, 224, 208, 0.2) 30%, 
+                rgba(64, 224, 208, 0.3) 50%, 
+                rgba(64, 224, 208, 0.2) 70%, 
+                transparent 100%);
+            animation-delay: -5s;
+        }
+
+        @keyframes auroraWave {
+            0%, 100% { transform: translateX(-20%) skewX(-5deg); }
+            50% { transform: translateX(20%) skewX(5deg); }
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.05) 0%, 
+                rgba(255, 255, 255, 0.02) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, 
+                rgba(64, 224, 208, 0.2) 0%, 
+                rgba(64, 224, 208, 0.1) 100%);
+            border-color: rgba(64, 224, 208, 0.3);
+            color: #40e0d0;
+            transform: translateX(-5px);
+        }
+
+        .back-btn:hover i {
+            transform: translateX(-3px);
+        }
+
+        .back-btn i {
+            transition: transform 0.3s ease;
+        }
+
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            padding-top: 80px;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #fff 0%, #40e0d0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            font-weight: 300;
+        }
+
+        /* Editor Container */
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Panel */
+        .panel {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.05) 0%, 
+                rgba(255, 255, 255, 0.02) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .panel:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        /* Panel Header */
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            flex-shrink: 0;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .panel-title i {
+            color: #40e0d0;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 11px;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            background: rgba(64, 224, 208, 0.1);
+            border-color: rgba(64, 224, 208, 0.3);
+            color: #40e0d0;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, rgba(64, 224, 208, 0.3), rgba(64, 224, 208, 0.1));
+            border-color: rgba(64, 224, 208, 0.3);
+            color: #fff;
+        }
+
+        .action-btn.primary:hover {
+            background: linear-gradient(135deg, rgba(64, 224, 208, 0.4), rgba(64, 224, 208, 0.2));
+        }
+
+        /* FIXED: Editor Area with Absolute Positioning */
+        .editor-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .line-numbers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 45px;
+            padding: 12px 8px;
+            background: rgba(0, 0, 0, 0.2);
+            color: rgba(255, 255, 255, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            text-align: right;
+            user-select: none;
+            overflow: hidden;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* FIXED: Textarea with Absolute Positioning */
+        textarea {
+            position: absolute;
+            top: 0;
+            left: 45px;
+            right: 0;
+            bottom: 0;
+            width: calc(100% - 45px);
+            height: 100%;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            overflow: auto;
+        }
+
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        textarea::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        textarea::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        textarea::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Output Area */
+        .output-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .output-line-numbers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 45px;
+            padding: 12px 8px;
+            background: rgba(0, 0, 0, 0.2);
+            color: rgba(255, 255, 255, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            text-align: right;
+            user-select: none;
+            overflow: hidden;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .output-content {
+            position: absolute;
+            top: 0;
+            left: 45px;
+            right: 0;
+            bottom: 0;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow: auto;
+            white-space: pre;
+        }
+
+        .output-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .output-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .output-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        /* JSON Syntax Highlighting */
+        .json-key {
+            color: #40e0d0;
+        }
+
+        .json-string {
+            color: #98c379;
+        }
+
+        .json-number {
+            color: #d19a66;
+        }
+
+        .json-boolean {
+            color: #c678dd;
+        }
+
+        .json-null {
+            color: #e06c75;
+        }
+
+        /* Error Message */
+        .error-message {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px;
+            display: none;
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .error-message i {
+            margin-right: 8px;
+        }
+
+        .error-line {
+            display: block;
+            margin-top: 6px;
+            font-size: 11px;
+            color: rgba(255, 107, 107, 0.8);
+        }
+
+        /* Success Message */
+        .success-message {
+            color: #40e0d0;
+            background: rgba(64, 224, 208, 0.1);
+            border: 1px solid rgba(64, 224, 208, 0.3);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin: 10px;
+            display: none;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .success-message.show {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 15px;
+            padding: 10px 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            flex-shrink: 0;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-item i {
+            color: #40e0d0;
+            font-size: 8px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 13px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 2px;
+        }
+
+        .view-toggle button {
+            padding: 5px 10px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .view-toggle button.active {
+            background: rgba(64, 224, 208, 0.2);
+            color: #40e0d0;
+        }
+
+        .view-toggle button:hover:not(.active) {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Tree View */
+        .tree-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 12px;
+            overflow: auto;
+            display: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .tree-view.show {
+            display: block;
+        }
+
+        .tree-item {
+            margin-left: 16px;
+        }
+
+        .tree-key {
+            color: #40e0d0;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tree-key:hover {
+            text-decoration: underline;
+        }
+
+        .tree-toggle {
+            width: 14px;
+            height: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .tree-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .tree-children {
+            display: block;
+        }
+
+        .tree-children.collapsed {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+
+            .main-container {
+                padding-top: 70px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .action-btn span {
+                display: none;
+            }
+
+            .action-btn {
+                padding: 6px 8px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .back-btn span {
+                display: none;
+            }
+
+            .back-btn {
+                padding: 10px;
+            }
+
+            .stats-bar {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .view-toggle {
+                display: none;
+            }
+
+            .header {
+                margin-bottom: 15px;
+            }
+
+            .header-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Stars Canvas -->
+    <canvas id="stars-canvas"></canvas>
+
+    <!-- Aurora Effect -->
+    <div class="aurora">
+        <div class="aurora-band"></div>
+        <div class="aurora-band"></div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="../home.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Home</span>
+    </a>
+
+    <div class="main-container">
+        <div class="header">
+         
+            <h1>JSON Formatter & Validator</h1>
+            <p>Format, validate, and beautify your JSON data</p>
+        </div>
+
+        <div class="editor-container">
+            <!-- Input Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Input JSON
+                    </div>
+                    <div class="panel-actions">
+                        <button class="action-btn" onclick="loadSample()">
+                            <i class="fas fa-flask"></i>
+                            <span>Sample</span>
+                        </button>
+                        <button class="action-btn" onclick="clearInput()">
+                            <i class="fas fa-trash"></i>
+                            <span>Clear</span>
+                        </button>
+                        <button class="action-btn primary" onclick="formatJSON()">
+                            <i class="fas fa-magic"></i>
+                            <span>Format</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="editor-wrapper">
+                    <div class="line-numbers" id="inputLineNumbers">1</div>
+                    <textarea id="jsonInput" placeholder="Paste your JSON here..." spellcheck="false"></textarea>
+                </div>
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <i class="fas fa-circle"></i>
+                        <span id="inputChars">0</span> chars
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-circle"></i>
+                        <span id="inputLines">1</span> lines
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-circle"></i>
+                        <span id="inputSize">0 B</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-check-circle"></i>
+                        Formatted Output
+                    </div>
+                    <div class="panel-actions">
+                        <div class="view-toggle">
+                            <button class="active" onclick="setView('code')" id="codeViewBtn">Code</button>
+                            <button onclick="setView('tree')" id="treeViewBtn">Tree</button>
+                        </div>
+                        <button class="action-btn" onclick="minifyJSON()">
+                            <i class="fas fa-compress"></i>
+                            <span>Minify</span>
+                        </button>
+                        <button class="action-btn" onclick="copyOutput()">
+                            <i class="fas fa-copy"></i>
+                            <span>Copy</span>
+                        </button>
+                        <button class="action-btn" onclick="downloadJSON()">
+                            <i class="fas fa-download"></i>
+                            <span>Download</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorText"></span>
+                    <span class="error-line" id="errorLine"></span>
+                </div>
+                
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Valid JSON</span>
+                </div>
+
+                <div class="output-wrapper" id="codeView">
+                    <div class="output-line-numbers" id="outputLineNumbers">1</div>
+                    <div class="output-content" id="jsonOutput"></div>
+                    <div class="tree-view" id="treeView"></div>
+                </div>
+
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <i class="fas fa-circle"></i>
+                        <span id="outputChars">0</span> chars
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-circle"></i>
+                        <span id="outputLines">0</span> lines
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-circle"></i>
+                        <span id="outputSize">0 B</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Stars Canvas
+        const canvas = document.getElementById('stars-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Star {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.baseAlpha = Math.random() * 0.5 + 0.3;
+                this.alpha = this.baseAlpha;
+                this.twinkleSpeed = Math.random() * 0.02 + 0.01;
+                this.twinklePhase = Math.random() * Math.PI * 2;
+            }
+
+            update(time) {
+                this.alpha = this.baseAlpha + Math.sin(time * this.twinkleSpeed + this.twinklePhase) * 0.3;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, Math.min(1, this.alpha))})`;
+                ctx.fill();
+            }
+        }
+
+        const stars = [];
+        for (let i = 0; i < 150; i++) {
+            stars.push(new Star());
+        }
+
+        let time = 0;
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            time++;
+            stars.forEach(star => {
+                star.update(time);
+                star.draw();
+            });
+            requestAnimationFrame(animateStars);
+        }
+        animateStars();
+
+        // JSON Formatter Logic
+        const jsonInput = document.getElementById('jsonInput');
+        const jsonOutput = document.getElementById('jsonOutput');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const inputLineNumbers = document.getElementById('inputLineNumbers');
+        const outputLineNumbers = document.getElementById('outputLineNumbers');
+
+        let currentJSON = null;
+        let currentView = 'code';
+
+        // Update line numbers
+        function updateLineNumbers(text, lineNumbersEl) {
+            const lines = (text.match(/\n/g) || []).length + 1;
+            let html = '';
+            for (let i = 1; i <= lines; i++) {
+                html += i + '\n';
+            }
+            lineNumbersEl.textContent = html;
+        }
+
+        // Input stats
+        function updateInputStats() {
+            const value = jsonInput.value;
+            document.getElementById('inputChars').textContent = value.length;
+            document.getElementById('inputLines').textContent = (value.match(/\n/g) || []).length + 1;
+            document.getElementById('inputSize').textContent = formatBytes(new Blob([value]).size);
+        }
+
+        // Output stats
+        function updateOutputStats(value) {
+            document.getElementById('outputChars').textContent = value.length;
+            document.getElementById('outputLines').textContent = (value.match(/\n/g) || []).length + 1;
+            document.getElementById('outputSize').textContent = formatBytes(new Blob([value]).size);
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Event listeners
+        jsonInput.addEventListener('input', function() {
+            updateLineNumbers(this.value, inputLineNumbers);
+            updateInputStats();
+        });
+
+        jsonInput.addEventListener('scroll', function() {
+            inputLineNumbers.scrollTop = this.scrollTop;
+        });
+
+        jsonOutput.addEventListener('scroll', function() {
+            outputLineNumbers.scrollTop = this.scrollTop;
+        });
+
+        // Syntax highlighting
+        function syntaxHighlight(json) {
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'json-number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'json-key';
+                    } else {
+                        cls = 'json-string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'json-null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+        // Format JSON
+        function formatJSON() {
+            const input = jsonInput.value.trim();
+            
+            if (!input) {
+                showError('Please enter JSON to format');
+                return;
+            }
+
+            try {
+                currentJSON = JSON.parse(input);
+                const formatted = JSON.stringify(currentJSON, null, 2);
+                
+                jsonOutput.innerHTML = syntaxHighlight(formatted);
+                updateLineNumbers(formatted, outputLineNumbers);
+                updateOutputStats(formatted);
+                
+                errorMessage.classList.remove('show');
+                successMessage.classList.add('show');
+                
+                showToast('JSON formatted successfully!');
+            } catch (e) {
+                showError(e.message);
+                currentJSON = null;
+            }
+        }
+
+        // Minify JSON
+        function minifyJSON() {
+            if (!currentJSON) {
+                showToast('Please format valid JSON first');
+                return;
+            }
+
+            const minified = JSON.stringify(currentJSON);
+            jsonOutput.innerHTML = syntaxHighlight(minified);
+            updateLineNumbers(minified, outputLineNumbers);
+            updateOutputStats(minified);
+            showToast('JSON minified!');
+        }
+
+        // Show error
+        function showError(message) {
+            const errorText = document.getElementById('errorText');
+            const errorLine = document.getElementById('errorLine');
+            
+            errorText.textContent = 'Invalid JSON: ' + message;
+            
+            const lineMatch = message.match(/position (\d+)/);
+            if (lineMatch) {
+                const position = parseInt(lineMatch[1]);
+                const lines = jsonInput.value.substring(0, position).split('\n');
+                errorLine.textContent = `Error near line ${lines.length}, column ${lines[lines.length - 1].length + 1}`;
+            } else {
+                errorLine.textContent = '';
+            }
+            
+            errorMessage.classList.add('show');
+            successMessage.classList.remove('show');
+            jsonOutput.innerHTML = '';
+            outputLineNumbers.textContent = '1';
+            updateOutputStats('');
+        }
+
+        // Copy output
+        function copyOutput() {
+            if (!currentJSON) {
+                showToast('Nothing to copy');
+                return;
+            }
+
+            const text = JSON.stringify(currentJSON, null, 2);
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copied to clipboard!');
+            }).catch(() => {
+                showToast('Failed to copy');
+            });
+        }
+
+        // Download JSON
+        function downloadJSON() {
+            if (!currentJSON) {
+                showToast('Nothing to download');
+                return;
+            }
+
+            const text = JSON.stringify(currentJSON, null, 2);
+            const blob = new Blob([text], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `formatted-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('JSON downloaded!');
+        }
+
+        // Clear input
+        function clearInput() {
+            jsonInput.value = '';
+            jsonOutput.innerHTML = '';
+            currentJSON = null;
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+            inputLineNumbers.textContent = '1';
+            outputLineNumbers.textContent = '1';
+            updateInputStats();
+            updateOutputStats('');
+            document.getElementById('treeView').innerHTML = '';
+            showToast('Cleared!');
+        }
+
+        // Load sample JSON
+        function loadSample() {
+            const sample = {
+                "name": "Chee Chee Tools",
+                "version": "1.0.0",
+                "description": "A collection of developer utilities",
+                "features": [
+                    "JSON Formatter",
+                    "Text Compare",
+                    "QR Code Generator",
+                    "Regex Tester"
+                ],
+                "author": {
+                    "name": "Sarath Molathoti",
+                    "github": "https://github.com/Sarath-Molathoti"
+                },
+                "isAwesome": true,
+                "rating": 5,
+                "tags": null
+            };
+            
+            jsonInput.value = JSON.stringify(sample, null, 2);
+            updateLineNumbers(jsonInput.value, inputLineNumbers);
+            updateInputStats();
+            showToast('Sample JSON loaded!');
+        }
+
+        // View toggle
+        function setView(view) {
+            currentView = view;
+            const jsonOutputEl = document.getElementById('jsonOutput');
+            const treeView = document.getElementById('treeView');
+            const outputLineNums = document.getElementById('outputLineNumbers');
+            const codeBtn = document.getElementById('codeViewBtn');
+            const treeBtn = document.getElementById('treeViewBtn');
+
+            if (view === 'code') {
+                jsonOutputEl.style.display = 'block';
+                outputLineNums.style.display = 'block';
+                treeView.classList.remove('show');
+                codeBtn.classList.add('active');
+                treeBtn.classList.remove('active');
+            } else {
+                jsonOutputEl.style.display = 'none';
+                outputLineNums.style.display = 'none';
+                treeView.classList.add('show');
+                codeBtn.classList.remove('active');
+                treeBtn.classList.add('active');
+                if (currentJSON) {
+                    renderTreeView(currentJSON);
+                }
+            }
+        }
+
+        // Tree view
+        function renderTreeView(data, container = null, key = null) {
+            if (!container) {
+                container = document.getElementById('treeView');
+                container.innerHTML = '';
+            }
+
+            const type = Array.isArray(data) ? 'array' : typeof data;
+            
+            if (type === 'object' || type === 'array') {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'tree-item';
+                
+                const keyEl = document.createElement('span');
+                keyEl.className = 'tree-key';
+                
+                const toggle = document.createElement('span');
+                toggle.className = 'tree-toggle';
+                toggle.innerHTML = '<i class="fas fa-chevron-down"></i>';
+                
+                const label = key !== null ? `"${key}": ` : '';
+                const bracket = type === 'array' ? '[' : '{';
+                const closeBracket = type === 'array' ? ']' : '}';
+                const count = type === 'array' ? data.length : Object.keys(data).length;
+                
+                keyEl.innerHTML = `${toggle.outerHTML}${label}<span style="color: rgba(255,255,255,0.7)">${bracket}</span> <span style="color: rgba(255,255,255,0.4)">${count} items</span>`;
+                wrapper.appendChild(keyEl);
+                
+                const children = document.createElement('div');
+                children.className = 'tree-children';
+                
+                if (type === 'array') {
+                    data.forEach((item, index) => {
+                        renderTreeView(item, children, index);
+                    });
+                } else {
+                    Object.keys(data).forEach(k => {
+                        renderTreeView(data[k], children, k);
+                    });
+                }
+                
+                const closeWrapper = document.createElement('div');
+                closeWrapper.innerHTML = `<span style="color: rgba(255,255,255,0.7)">${closeBracket}</span>`;
+                closeWrapper.style.marginLeft = '16px';
+                children.appendChild(closeWrapper);
+                
+                wrapper.appendChild(children);
+                container.appendChild(wrapper);
+                
+                keyEl.addEventListener('click', function() {
+                    const toggleIcon = this.querySelector('.tree-toggle');
+                    toggleIcon.classList.toggle('collapsed');
+                    children.classList.toggle('collapsed');
+                });
+            } else {
+                const item = document.createElement('div');
+                item.className = 'tree-item';
+                
+                let valueClass = 'json-string';
+                let displayValue = data;
+                
+                if (typeof data === 'string') {
+                    displayValue = `"${data}"`;
+                } else if (typeof data === 'number') {
+                    valueClass = 'json-number';
+                } else if (typeof data === 'boolean') {
+                    valueClass = 'json-boolean';
+                } else if (data === null) {
+                    valueClass = 'json-null';
+                    displayValue = 'null';
+                }
+                
+                item.innerHTML = `<span class="json-key">"${key}"</span>: <span class="${valueClass}">${displayValue}</span>`;
+                container.appendChild(item);
+            }
+        }
+
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                formatJSON();
+            }
+        });
+
+        // Initial setup
+        updateInputStats();
+        updateOutputStats('');
+    </script>
+</body>
+</html>

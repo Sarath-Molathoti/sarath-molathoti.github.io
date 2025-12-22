@@ -3,7 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Draw a Perfect Circle</title>
+    <title>Draw a Perfect Circle | Challenge</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <style>
       * {
         margin: 0;
@@ -16,24 +24,35 @@
         background: #0a192f;
         color: #ffffff;
         overflow-x: hidden;
+        min-height: 100vh;
       }
 
+      /* Navbar */
       .navbar {
         position: fixed;
         width: 100%;
-        padding: 20px 50px;
+        padding: 15px 50px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: #001a3a;
+        background: rgba(0, 26, 58, 0.95);
         z-index: 1000;
         backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 255, 157, 0.1);
       }
 
       .logo {
-        font-size: 24px;
-        font-weight: bold;
+        font-size: 22px;
+        font-weight: 600;
         color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo i {
+        color: #00ff9d;
+        font-size: 24px;
       }
 
       .nav-links {
@@ -45,8 +64,12 @@
       .nav-links a {
         color: #fff;
         text-decoration: none;
-        font-size: 16px;
+        font-size: 15px;
         position: relative;
+        transition: color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
       }
 
       .nav-links a:hover {
@@ -59,7 +82,7 @@
         bottom: -5px;
         left: 0;
         width: 0;
-        height: 3px;
+        height: 2px;
         background: #00ff9d;
         transition: width 0.3s ease;
       }
@@ -68,171 +91,991 @@
         width: 100%;
       }
 
-      .container {
+      /* Main Container */
+      .main-container {
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
         min-height: 100vh;
-        padding: 20px;
-        background: #0a192f;
+        padding: 100px 20px 40px;
+        background: linear-gradient(135deg, #0a192f 0%, #12263b 50%, #0a192f 100%);
+        position: relative;
+      }
+
+      .main-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(0, 255, 157, 0.03) 0%, transparent 50%);
+        pointer-events: none;
+      }
+
+      /* Header Section */
+      .header-section {
+        text-align: center;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .header-section h1 {
+        color: #fff;
+        font-size: 2.5em;
+        font-weight: 600;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #00ff9d, #00ccff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .header-section p {
+        color: #8892b0;
+        font-size: 1.1em;
+        font-weight: 300;
+      }
+
+      /* Game Container */
+      .game-container {
+        display: flex;
+        gap: 40px;
+        align-items: flex-start;
+        justify-content: center;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Canvas Container */
+      .canvas-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .canvas-wrapper {
+        position: relative;
+        border-radius: 20px;
+        padding: 4px;
+        background: linear-gradient(135deg, #00ff9d, #00ccff, #00ff9d);
+        background-size: 200% 200%;
+        animation: gradientBorder 3s ease infinite;
+        box-shadow: 0 0 40px rgba(0, 255, 157, 0.15);
+      }
+
+      @keyframes gradientBorder {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
       }
 
       #drawCanvas {
-        border: 2px solid #00ff9d;
-        border-radius: 15px;
+        display: block;
+        border-radius: 16px;
         cursor: crosshair;
-        background: #12263b;
-        box-shadow: 0 0 20px rgba(0, 255, 157, 0.1);
+        background: #0a192f;
+        transition: box-shadow 0.3s ease;
       }
 
-      #score {
-        font-size: 24px;
-        margin-top: 20px;
-        color: #fff;
-        font-weight: bold;
+      #drawCanvas:hover {
+        box-shadow: inset 0 0 30px rgba(0, 255, 157, 0.05);
+      }
+
+      .canvas-hint {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: rgba(136, 146, 176, 0.5);
+        font-size: 1.1em;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
         text-align: center;
-        text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
       }
 
-      #message {
-        font-size: 20px;
-        margin-top: 10px;
-        color: #ff4757;
-        text-align: center;
-        animation: fadeIn 0.5s ease;
+      .canvas-hint i {
+        font-size: 3em;
+        margin-bottom: 10px;
+        display: block;
       }
 
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
+      .canvas-hint.hidden {
+        opacity: 0;
       }
 
-      h1 {
+      /* Stats Panel */
+      .stats-panel {
+        background: rgba(18, 38, 59, 0.8);
+        border-radius: 20px;
+        padding: 30px;
+        min-width: 300px;
+        border: 1px solid rgba(0, 255, 157, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      .stats-title {
+        font-size: 1.2em;
+        font-weight: 600;
         color: #00ff9d;
-        font-size: 2.5em;
-        margin-bottom: 30px;
-        text-shadow: 0 0 10px #00ff9d;
-        font-weight: lighter;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      /* Circular Progress */
+      .score-circle-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 25px;
+      }
+
+      .score-circle {
+        position: relative;
+        width: 160px;
+        height: 160px;
+      }
+
+      .score-circle svg {
+        transform: rotate(-90deg);
+        width: 160px;
+        height: 160px;
+      }
+
+      .score-circle .bg-circle {
+        fill: none;
+        stroke: rgba(0, 255, 157, 0.1);
+        stroke-width: 8;
+      }
+
+      .score-circle .progress-circle {
+        fill: none;
+        stroke: url(#scoreGradient);
+        stroke-width: 8;
+        stroke-linecap: round;
+        stroke-dasharray: 440;
+        stroke-dashoffset: 440;
+        transition: stroke-dashoffset 1s ease;
+      }
+
+      .score-value {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+      }
+
+      .score-value .number {
+        font-size: 2.8em;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1;
+      }
+
+      .score-value .label {
+        font-size: 0.9em;
+        color: #8892b0;
+        margin-top: 5px;
+      }
+
+      /* Stats Grid */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+
+      .stat-item {
+        background: rgba(0, 255, 157, 0.05);
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid rgba(0, 255, 157, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .stat-item:hover {
+        border-color: rgba(0, 255, 157, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .stat-item .value {
+        font-size: 1.5em;
+        font-weight: 600;
+        color: #00ff9d;
+      }
+
+      .stat-item .label {
+        font-size: 0.75em;
+        color: #8892b0;
+        margin-top: 5px;
+      }
+
+      /* Message Display */
+      .message-display {
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .message-display.perfect {
+        background: linear-gradient(135deg, rgba(0, 255, 157, 0.2), rgba(0, 204, 255, 0.2));
+        border: 1px solid rgba(0, 255, 157, 0.3);
+        color: #00ff9d;
+      }
+
+      .message-display.great {
+        background: rgba(118, 255, 138, 0.1);
+        border: 1px solid rgba(118, 255, 138, 0.3);
+        color: #76ff8a;
+      }
+
+      .message-display.good {
+        background: rgba(255, 193, 7, 0.1);
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        color: #ffc107;
+      }
+
+      .message-display.poor {
+        background: rgba(255, 71, 87, 0.1);
+        border: 1px solid rgba(255, 71, 87, 0.3);
+        color: #ff4757;
+      }
+
+      .message-display.info {
+        background: rgba(0, 204, 255, 0.1);
+        border: 1px solid rgba(0, 204, 255, 0.3);
+        color: #00ccff;
+      }
+
+      .message-display.hidden {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      .message-display i {
+        margin-right: 10px;
+        font-size: 1.2em;
+      }
+
+      /* Buttons */
+      .button-group {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 14px 24px;
+        border: none;
+        border-radius: 12px;
+        font-size: 0.95em;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #00ff9d, #00ccff);
+        color: #001a3a;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0, 255, 157, 0.3);
+      }
+
+      .btn-secondary {
+        background: rgba(0, 255, 157, 0.1);
+        color: #00ff9d;
+        border: 1px solid rgba(0, 255, 157, 0.3);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(0, 255, 157, 0.2);
+        transform: translateY(-2px);
+      }
+
+      /* Celebration Animation */
+      .celebration {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 1000;
+      }
+
+      .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        animation: confetti-fall 3s ease-out forwards;
+      }
+
+      @keyframes confetti-fall {
+        0% {
+          opacity: 1;
+          transform: translateY(-100px) rotate(0deg);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(100vh) rotate(720deg);
+        }
+      }
+
+      /* Achievement Badge */
+      .achievement-badge {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: linear-gradient(135deg, #00ff9d, #00ccff);
+        color: #001a3a;
+        padding: 30px 50px;
+        border-radius: 20px;
+        text-align: center;
+        z-index: 1001;
+        box-shadow: 0 20px 60px rgba(0, 255, 157, 0.4);
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .achievement-badge.show {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .achievement-badge i {
+        font-size: 3em;
+        margin-bottom: 10px;
+      }
+
+      .achievement-badge h3 {
+        font-size: 1.5em;
+        margin-bottom: 5px;
+      }
+
+      .achievement-badge p {
+        font-size: 1em;
+        opacity: 0.8;
+      }
+
+      /* Overlay */
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 1000;
+        transition: opacity 0.3s ease;
+      }
+
+      .overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* Responsive */
+      @media (max-width: 1100px) {
+        .game-container {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .stats-panel {
+          width: 100%;
+          max-width: 550px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .navbar {
+          padding: 15px 20px;
+        }
+
+        .logo {
+          font-size: 18px;
+        }
+
+        .nav-links {
+          gap: 20px;
+        }
+
+        .nav-links a {
+          font-size: 14px;
+        }
+
+        .main-container {
+          padding: 80px 15px 30px;
+        }
+
+        .header-section h1 {
+          font-size: 1.8em;
+        }
+
+        .header-section p {
+          font-size: 0.95em;
+        }
+
+        #drawCanvas {
+          width: 340px;
+          height: 340px;
+        }
+
+        .stats-panel {
+          padding: 20px;
+          min-width: unset;
+        }
+
+        .score-circle {
+          width: 130px;
+          height: 130px;
+        }
+
+        .score-circle svg {
+          width: 130px;
+          height: 130px;
+        }
+
+        .score-value .number {
+          font-size: 2.2em;
+        }
+
+        .stats-grid {
+          gap: 10px;
+        }
+
+        .stat-item {
+          padding: 12px;
+        }
+
+        .stat-item .value {
+          font-size: 1.3em;
+        }
+      }
+
+      @media (max-width: 400px) {
+        #drawCanvas {
+          width: 300px;
+          height: 300px;
+        }
+
+        .header-section h1 {
+          font-size: 1.5em;
+        }
+
+        .button-group {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
       }
     </style>
   </head>
   <body>
     <nav class="navbar">
-      <div class="logo">Circle Drawing Tool</div>
+      <div class="logo">
+        <i class="fas fa-circle-notch"></i>
+        Perfect Circle
+      </div>
       <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="../home.html"><i class="fas fa-home"></i> Home</a></li>
       </ul>
     </nav>
 
-    <div class="container">
-      <h1>Draw a Perfect Circle</h1>
-      <canvas id="drawCanvas" width="500" height="500"></canvas>
-      <p id="score">Score: 0%</p>
-      <p id="message"></p>
+    <div class="main-container">
+      <div class="header-section">
+        <h1><i class="fas fa-bullseye"></i> Draw a Perfect Circle</h1>
+        <p>Test your precision and steady hand. Can you achieve 100%?</p>
+      </div>
+
+      <div class="game-container">
+        <div class="canvas-container">
+          <div class="canvas-wrapper">
+            <canvas id="drawCanvas" width="550" height="550"></canvas>
+            <div class="canvas-hint" id="canvasHint">
+              <i class="fas fa-hand-pointer"></i>
+              Click and drag to draw
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-panel">
+          <div class="stats-title">
+            <i class="fas fa-chart-line"></i>
+            Performance
+          </div>
+
+          <div class="score-circle-container">
+            <div class="score-circle">
+              <svg viewBox="0 0 160 160">
+                <defs>
+                  <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00ff9d" />
+                    <stop offset="100%" stop-color="#00ccff" />
+                  </linearGradient>
+                </defs>
+                <circle class="bg-circle" cx="80" cy="80" r="70"></circle>
+                <circle class="progress-circle" id="progressCircle" cx="80" cy="80" r="70"></circle>
+              </svg>
+              <div class="score-value">
+                <div class="number" id="scoreNumber">0</div>
+                <div class="label">percent</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="value" id="bestScore">0%</div>
+              <div class="label">Best Score</div>
+            </div>
+            <div class="stat-item">
+              <div class="value" id="attempts">0</div>
+              <div class="label">Attempts</div>
+            </div>
+            <div class="stat-item">
+              <div class="value" id="avgScore">0%</div>
+              <div class="label">Average</div>
+            </div>
+            <div class="stat-item">
+              <div class="value" id="streak">0</div>
+              <div class="label">Streak (80%+)</div>
+            </div>
+          </div>
+
+          <div class="message-display hidden" id="messageDisplay">
+            <i class="fas fa-info-circle"></i>
+            <span id="messageText">Start drawing!</span>
+          </div>
+
+          <div class="button-group">
+            <button class="btn btn-primary" id="clearBtn">
+              <i class="fas fa-redo"></i>
+              Clear
+            </button>
+            <button class="btn btn-secondary" id="showGuideBtn">
+              <i class="fas fa-crosshairs"></i>
+              Guide
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="achievement-badge" id="achievementBadge">
+      <i class="fas fa-trophy"></i>
+      <h3 id="achievementTitle">Perfect!</h3>
+      <p id="achievementText">You drew a perfect circle!</p>
+    </div>
+    <div class="celebration" id="celebration"></div>
 
     <script>
       const canvas = document.getElementById("drawCanvas");
       const ctx = canvas.getContext("2d");
+      const progressCircle = document.getElementById("progressCircle");
+      const scoreNumber = document.getElementById("scoreNumber");
+      const messageDisplay = document.getElementById("messageDisplay");
+      const messageText = document.getElementById("messageText");
+      const canvasHint = document.getElementById("canvasHint");
+      const clearBtn = document.getElementById("clearBtn");
+      const showGuideBtn = document.getElementById("showGuideBtn");
+      const overlay = document.getElementById("overlay");
+      const achievementBadge = document.getElementById("achievementBadge");
+      const celebration = document.getElementById("celebration");
+
       let drawing = false;
       let points = [];
+      let showGuide = false;
+      let stats = {
+        best: 0,
+        attempts: 0,
+        totalScore: 0,
+        streak: 0
+      };
 
-      const MIN_POINTS = 10;
+      const MIN_POINTS = 20;
       const MIN_RADIUS = 50;
+      const CIRCUMFERENCE = 2 * Math.PI * 70;
 
-      canvas.addEventListener("mousedown", (e) => {
-        drawing = true;
-        points = [];
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        document.getElementById("message").textContent = "";
-      });
+      // Load stats from localStorage
+      function loadStats() {
+        const saved = localStorage.getItem("circleStats");
+        if (saved) {
+          stats = JSON.parse(saved);
+          updateStatsDisplay();
+        }
+      }
 
-      canvas.addEventListener("mousemove", (e) => {
-        if (!drawing) return;
-        points.push({ x: e.offsetX, y: e.offsetY });
-        drawLivePath();
-      });
+      // Save stats to localStorage
+      function saveStats() {
+        localStorage.setItem("circleStats", JSON.stringify(stats));
+      }
 
-      canvas.addEventListener("mouseup", () => {
-        drawing = false;
-        evaluateCircle();
-      });
+      // Update stats display
+      function updateStatsDisplay() {
+        document.getElementById("bestScore").textContent = stats.best + "%";
+        document.getElementById("attempts").textContent = stats.attempts;
+        document.getElementById("avgScore").textContent = 
+          stats.attempts > 0 ? Math.round(stats.totalScore / stats.attempts) + "%" : "0%";
+        document.getElementById("streak").textContent = stats.streak;
+      }
 
-      function drawLivePath() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Update circular progress
+      function updateProgress(score) {
+        const offset = CIRCUMFERENCE - (score / 100) * CIRCUMFERENCE;
+        progressCircle.style.strokeDashoffset = offset;
+        
+        // Animate score number
+        let currentScore = parseInt(scoreNumber.textContent) || 0;
+        const increment = (score - currentScore) / 20;
+        let frame = 0;
+        
+        const animation = setInterval(() => {
+          frame++;
+          currentScore += increment;
+          if (frame >= 20) {
+            currentScore = score;
+            clearInterval(animation);
+          }
+          scoreNumber.textContent = Math.round(currentScore);
+        }, 25);
+      }
+
+      // Show message with appropriate styling
+      function showMessage(text, type) {
+        messageDisplay.className = "message-display " + type;
+        
+        let icon = "fa-info-circle";
+        if (type === "perfect") icon = "fa-crown";
+        else if (type === "great") icon = "fa-star";
+        else if (type === "good") icon = "fa-thumbs-up";
+        else if (type === "poor") icon = "fa-times-circle";
+        
+        messageDisplay.innerHTML = `<i class="fas ${icon}"></i><span>${text}</span>`;
+      }
+
+      // Hide message
+      function hideMessage() {
+        messageDisplay.classList.add("hidden");
+      }
+
+      // Create confetti celebration
+      function createCelebration() {
+        celebration.innerHTML = "";
+        const colors = ["#00ff9d", "#00ccff", "#ff6b6b", "#ffd93d", "#6c5ce7", "#a29bfe"];
+        
+        for (let i = 0; i < 60; i++) {
+          const confetti = document.createElement("div");
+          confetti.className = "confetti";
+          confetti.style.left = Math.random() * 100 + "%";
+          confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.animationDelay = Math.random() * 0.5 + "s";
+          confetti.style.animationDuration = (2 + Math.random() * 2) + "s";
+          confetti.style.borderRadius = Math.random() > 0.5 ? "50%" : "0";
+          confetti.style.width = (5 + Math.random() * 10) + "px";
+          confetti.style.height = confetti.style.width;
+          celebration.appendChild(confetti);
+        }
+        
+        setTimeout(() => {
+          celebration.innerHTML = "";
+        }, 4000);
+      }
+
+      // Show achievement badge
+      function showAchievement(title, text) {
+        document.getElementById("achievementTitle").textContent = title;
+        document.getElementById("achievementText").textContent = text;
+        overlay.classList.add("show");
+        achievementBadge.classList.add("show");
+        createCelebration();
+        
+        setTimeout(() => {
+          overlay.classList.remove("show");
+          achievementBadge.classList.remove("show");
+        }, 2500);
+      }
+
+      // Draw smooth path
+      function drawPath(color = "#00ff9d", lineWidth = 4) {
+        if (points.length < 2) return;
+        
         ctx.beginPath();
         ctx.moveTo(points[0].x, points[0].y);
-        points.forEach((point) => ctx.lineTo(point.x, point.y));
+        
+        for (let i = 1; i < points.length - 2; i++) {
+          const xc = (points[i].x + points[i + 1].x) / 2;
+          const yc = (points[i].y + points[i + 1].y) / 2;
+          ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+        }
+        
+        if (points.length > 2) {
+          ctx.quadraticCurveTo(
+            points[points.length - 2].x,
+            points[points.length - 2].y,
+            points[points.length - 1].x,
+            points[points.length - 1].y
+          );
+        }
+        
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = "#00ff9d";
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = color;
         ctx.stroke();
       }
 
+      // Draw guide circle
+      function drawGuide() {
+        if (!showGuide) return;
+        
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, 180, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(0, 255, 157, 0.15)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([10, 10]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Center dot
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0, 255, 157, 0.3)";
+        ctx.fill();
+      }
+
+      // Draw ideal circle overlay
+      function drawIdealCircle(centerX, centerY, radius) {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(0, 204, 255, 0.4)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 8]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Clear canvas
+      function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        points = [];
+        updateProgress(0);
+        scoreNumber.textContent = "0";
+        hideMessage();
+        canvasHint.classList.remove("hidden");
+        if (showGuide) drawGuide();
+      }
+
+      // Get position from event (mouse or touch)
+      function getPosition(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        
+        if (e.touches) {
+          return {
+            x: (e.touches[0].clientX - rect.left) * scaleX,
+            y: (e.touches[0].clientY - rect.top) * scaleY
+          };
+        }
+        return {
+          x: (e.clientX - rect.left) * scaleX,
+          y: (e.clientY - rect.top) * scaleY
+        };
+      }
+
+      // Start drawing
+      function startDrawing(e) {
+        e.preventDefault();
+        drawing = true;
+        points = [];
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (showGuide) drawGuide();
+        hideMessage();
+        canvasHint.classList.add("hidden");
+        
+        const pos = getPosition(e);
+        points.push(pos);
+      }
+
+      // Continue drawing
+      function continueDrawing(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        
+        const pos = getPosition(e);
+        points.push(pos);
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (showGuide) drawGuide();
+        drawPath();
+      }
+
+      // End drawing
+      function endDrawing(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        drawing = false;
+        evaluateCircle();
+      }
+
+      // Evaluate the drawn circle
       function evaluateCircle() {
         if (points.length < MIN_POINTS) {
-          document.getElementById("score").innerText = "Score: 0%";
-          document.getElementById("message").textContent = "";
+          showMessage("Draw a complete circle!", "info");
           return;
         }
 
-        let sumX = 0,
-          sumY = 0;
+        // Calculate center
+        let sumX = 0, sumY = 0;
         points.forEach((p) => {
           sumX += p.x;
           sumY += p.y;
         });
-        let centerX = sumX / points.length;
-        let centerY = sumY / points.length;
+        const centerX = sumX / points.length;
+        const centerY = sumY / points.length;
 
-        let distances = points.map((p) =>
+        // Calculate distances from center
+        const distances = points.map((p) =>
           Math.hypot(p.x - centerX, p.y - centerY)
         );
-        let avgRadius = distances.reduce((a, b) => a + b, 0) / distances.length;
+        const avgRadius = distances.reduce((a, b) => a + b, 0) / distances.length;
 
+        // Check minimum radius
         if (avgRadius < MIN_RADIUS) {
-          document.getElementById("score").innerText = "";
-          document.getElementById("message").textContent =
-            "Circle is too small";
+          showMessage("Circle is too small! Go bigger.", "info");
           return;
         }
 
-        let deviation = Math.sqrt(
-          distances
-            .map((d) => (d - avgRadius) ** 2)
-            .reduce((a, b) => a + b, 0) / distances.length
+        // Calculate deviation
+        const deviation = Math.sqrt(
+          distances.map((d) => (d - avgRadius) ** 2).reduce((a, b) => a + b, 0) / distances.length
         );
-        let score = Math.max(0, 100 - deviation * 5);
+
+        // Calculate score
+        let score = Math.max(0, 100 - deviation * 3);
+        
+        // Check if circle is closed
+        const startEndDistance = Math.hypot(
+          points[0].x - points[points.length - 1].x,
+          points[0].y - points[points.length - 1].y
+        );
+        if (startEndDistance > avgRadius * 0.3) {
+          score = Math.max(0, score - 15);
+        }
+
         score = Math.round(score);
 
-        ctx.beginPath();
-        ctx.moveTo(points[0].x, points[0].y);
-        points.forEach((point) => ctx.lineTo(point.x, point.y));
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = "#00ff9d";
-        ctx.stroke();
-
-        document.getElementById("score").innerText = `Score: ${score}%`;
-        document.getElementById("message").textContent = "";
-
-        if (score >= 90) {
-          document.getElementById("score").style.color = "#00ff9d";
-        } else if (score >= 70) {
-          document.getElementById("score").style.color = "#76ff8a";
+        // Update stats
+        stats.attempts++;
+        stats.totalScore += score;
+        if (score > stats.best) {
+          stats.best = score;
+        }
+        if (score >= 80) {
+          stats.streak++;
         } else {
-          document.getElementById("score").style.color = "#ff4757";
+          stats.streak = 0;
+        }
+        saveStats();
+        updateStatsDisplay();
+
+        // Draw ideal circle for comparison
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (showGuide) drawGuide();
+        drawIdealCircle(centerX, centerY, avgRadius);
+        drawPath(getScoreColor(score));
+
+        // Update progress
+        updateProgress(score);
+
+        // Show appropriate message
+        if (score >= 95) {
+          showMessage("PERFECT! Incredible precision!", "perfect");
+          if (score === 100) {
+            showAchievement("🏆 PERFECT 100!", "Absolutely flawless!");
+          } else {
+            showAchievement("⭐ AMAZING!", `${score}% - Nearly perfect!`);
+          }
+        } else if (score >= 85) {
+          showMessage("Excellent! Almost perfect!", "great");
+        } else if (score >= 70) {
+          showMessage("Good job! Keep practicing!", "good");
+        } else if (score >= 50) {
+          showMessage("Not bad, you can do better!", "good");
+        } else {
+          showMessage("Keep trying! Practice makes perfect.", "poor");
         }
       }
+
+      // Get color based on score
+      function getScoreColor(score) {
+        if (score >= 90) return "#00ff9d";
+        if (score >= 70) return "#76ff8a";
+        if (score >= 50) return "#ffc107";
+        return "#ff4757";
+      }
+
+      // Event listeners - Mouse
+      canvas.addEventListener("mousedown", startDrawing);
+      canvas.addEventListener("mousemove", continueDrawing);
+      canvas.addEventListener("mouseup", endDrawing);
+      canvas.addEventListener("mouseleave", endDrawing);
+
+      // Event listeners - Touch
+      canvas.addEventListener("touchstart", startDrawing, { passive: false });
+      canvas.addEventListener("touchmove", continueDrawing, { passive: false });
+      canvas.addEventListener("touchend", endDrawing, { passive: false });
+      canvas.addEventListener("touchcancel", endDrawing, { passive: false });
+
+      // Button listeners
+      clearBtn.addEventListener("click", clearCanvas);
+      
+      showGuideBtn.addEventListener("click", () => {
+        showGuide = !showGuide;
+        showGuideBtn.innerHTML = showGuide 
+          ? '<i class="fas fa-eye-slash"></i> Hide Guide' 
+          : '<i class="fas fa-crosshairs"></i> Guide';
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (showGuide) drawGuide();
+        if (points.length > 0) drawPath();
+      });
+
+      // Close achievement on overlay click
+      overlay.addEventListener("click", () => {
+        overlay.classList.remove("show");
+        achievementBadge.classList.remove("show");
+      });
+
+      // Initialize
+      loadStats();
+      progressCircle.style.strokeDasharray = CIRCUMFERENCE;
+      progressCircle.style.strokeDashoffset = CIRCUMFERENCE;
     </script>
   </body>
 </html>
